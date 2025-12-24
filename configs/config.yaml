@@ -1,6 +1,6 @@
 ollama:
   base_url: "http://localhost:11434"
-  model: "qwen2.5-vl:7b"
+  model: "qwen2.5vl:latest"
   endpoint: "/api/generate"
   timeout_ms: 120000
 
@@ -10,18 +10,25 @@ traits:
   # Evolve this taxonomy later without changing code.
   taxonomy:
     - name: "activities"
-      description: "Sports, travel, gym, outdoors, hobbies visible in images"
+      description: "Only activities clearly visible in the photo (e.g., gym, hiking). Do NOT infer from sidebar/caption text."
+    - name: "appearance"
+      description: "Visible physical appearance and looks: hair style/length, eyes, face visibility, accessories (earrings, glasses), clothing details, and overall visual vibe (elegant, cute, sporty). Avoid sensitive traits."
+    - name: "aesthetic_impression"
+      description: "Subjective overall aesthetic impression from the photo (e.g., elegant, cute, pleasant). Must be clearly subjective and based only on visible cues."
+    - name: "pose"
+      description: "Visible pose or body language (e.g., leaning, resting head, relaxed)."
     - name: "style"
-      description: "Overall style cues like casual/formal, fashion vibe"
+      description: "Overall fashion style cues (casual/formal/trendy) based on clothing and accessories."
     - name: "social_context"
-      description: "Solo vs group photos, events, social settings"
+      description: "Solo vs group photo, event/casual setting based on the photo only."
     - name: "photo_quality"
-      description: "Lighting, clarity, composition, filters"
+      description: "Lighting, clarity, composition, filters based on the photo."
     - name: "potential_red_flags"
-      description: "Anything that might be a concern (be conservative, avoid sensitive inferences)"
+      description: "Conservative photo-based concerns only (e.g., face heavily obscured, extreme blur). Avoid sensitive inferences."
+
 
 prompt:
-  template_path: "prompts/traits.tmpl"
+  template_path: "prompts/traits1.tmpl"
   # Optional: if you want to keep prompt changes out of code, add prompt variables here.
   vars:
     brand: "SwipeAssist"
