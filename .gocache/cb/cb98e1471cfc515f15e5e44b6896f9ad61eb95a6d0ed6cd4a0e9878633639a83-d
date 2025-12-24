@@ -1,0 +1,12 @@
+# test log
+getenv TMPDIR
+open /var/folders/yj/_0b_4kf52vjb2y9fjznw1wz80000gn/T/TestTemplateDataRenderrenders_template_file337868695/001/prompt.tmpl
+open /var/folders/yj/_0b_4kf52vjb2y9fjznw1wz80000gn/T/TestTemplateDataRenderrenders_template_file337868695/001/prompt.tmpl
+open /var/folders/yj/_0b_4kf52vjb2y9fjznw1wz80000gn/T
+getenv TMPDIR
+open /var/folders/yj/_0b_4kf52vjb2y9fjznw1wz80000gn/T/TestTemplateDataRenderreturns_error_when_file_missing2844128075/001/missing.tmpl
+open /var/folders/yj/_0b_4kf52vjb2y9fjznw1wz80000gn/T
+getenv TMPDIR
+open /var/folders/yj/_0b_4kf52vjb2y9fjznw1wz80000gn/T/TestTemplateDataRenderpropagates_template_execution_errors1372986830/001/bad.tmpl
+open /var/folders/yj/_0b_4kf52vjb2y9fjznw1wz80000gn/T/TestTemplateDataRenderpropagates_template_execution_errors1372986830/001/bad.tmpl
+open /var/folders/yj/_0b_4kf52vjb2y9fjznw1wz80000gn/T

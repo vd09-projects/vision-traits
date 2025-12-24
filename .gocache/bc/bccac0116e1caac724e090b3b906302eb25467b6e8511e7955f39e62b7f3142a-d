@@ -1,0 +1,12 @@
+# test log
+getenv TMPDIR
+getenv TMPDIR
+getenv TMPDIR
+open /var/folders/yj/_0b_4kf52vjb2y9fjznw1wz80000gn/T/TestLoadloads_config_and_applies_defaults1784719791/001/config.yaml
+open /var/folders/yj/_0b_4kf52vjb2y9fjznw1wz80000gn/T/TestLoadreturns_error_when_yaml_invalid24513923/001/bad.yaml
+open /var/folders/yj/_0b_4kf52vjb2y9fjznw1wz80000gn/T/TestLoadreturns_error_when_file_missing3642336569/001/missing.yaml
+open /var/folders/yj/_0b_4kf52vjb2y9fjznw1wz80000gn/T
+open /var/folders/yj/_0b_4kf52vjb2y9fjznw1wz80000gn/T/TestLoadloads_config_and_applies_defaults1784719791/001/config.yaml
+open /var/folders/yj/_0b_4kf52vjb2y9fjznw1wz80000gn/T/TestLoadreturns_error_when_yaml_invalid24513923/001/bad.yaml
+open /var/folders/yj/_0b_4kf52vjb2y9fjznw1wz80000gn/T
+open /var/folders/yj/_0b_4kf52vjb2y9fjznw1wz80000gn/T

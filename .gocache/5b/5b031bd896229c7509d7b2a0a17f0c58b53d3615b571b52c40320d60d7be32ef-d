@@ -1,0 +1,3 @@
+./config.go
+./type.go
+./config_test.go
