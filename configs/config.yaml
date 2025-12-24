@@ -1,0 +1,27 @@
+ollama:
+  base_url: "http://localhost:11434"
+  model: "qwen2.5-vl:7b"
+  endpoint: "/api/generate"
+  timeout_ms: 120000
+
+traits:
+  max_images: 3
+  locale: "en-IN"
+  # Evolve this taxonomy later without changing code.
+  taxonomy:
+    - name: "activities"
+      description: "Sports, travel, gym, outdoors, hobbies visible in images"
+    - name: "style"
+      description: "Overall style cues like casual/formal, fashion vibe"
+    - name: "social_context"
+      description: "Solo vs group photos, events, social settings"
+    - name: "photo_quality"
+      description: "Lighting, clarity, composition, filters"
+    - name: "potential_red_flags"
+      description: "Anything that might be a concern (be conservative, avoid sensitive inferences)"
+
+prompt:
+  template_path: "prompts/traits.tmpl"
+  # Optional: if you want to keep prompt changes out of code, add prompt variables here.
+  vars:
+    brand: "SwipeAssist"
