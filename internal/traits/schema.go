@@ -14,8 +14,15 @@ func TraitsJSONSchema() map[string]interface{} {
 					"type":                 "object",
 					"additionalProperties": false,
 					"properties": map[string]interface{}{
-						"summary":    map[string]interface{}{"type": "string"},
-						"signals":    map[string]interface{}{"type": "array", "items": map[string]interface{}{"type": "string"}},
+						"summary": map[string]interface{}{"type": "string"},
+						"signals": map[string]interface{}{"type": "array", "items": map[string]interface{}{"type": "string"}},
+						"signals_by_key": map[string]interface{}{
+							"type": "object",
+							"additionalProperties": map[string]interface{}{
+								"type":  "array",
+								"items": map[string]interface{}{"type": "string"},
+							},
+						},
 						"confidence": map[string]interface{}{"type": "integer", "minimum": 0, "maximum": 100},
 					},
 					"required": []string{"summary", "signals", "confidence"},

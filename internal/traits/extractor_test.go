@@ -59,7 +59,7 @@ func TestExtractorExtractSuccess(t *testing.T) {
 		if !ok || format["type"] != "object" {
 			t.Fatalf("Generate format = %#v, want schema map", req.Format)
 		}
-		return `{"global_confidence":80,"traits":{"color":{"summary":"red","signals":["warm"],"confidence":70}},"notes":["from-model"]}`, nil
+		return `{"global_confidence":80,"traits":{"color":{"summary":"red","signals":["warm"],"signals_by_key":{"tone":["warm"]},"confidence":70}},"notes":["from-model"]}`, nil
 	})
 
 	ext := &Extractor{cfg: cfg, ollama: stub}
@@ -75,11 +75,15 @@ func TestExtractorExtractSuccess(t *testing.T) {
 	if got.Traits["color"].Summary != "red" {
 		t.Fatalf("Extract() color summary = %q, want %q", got.Traits["color"].Summary, "red")
 	}
+	wantSignalsByKey := map[string][]string{"tone": []string{"warm"}}
+	if !reflect.DeepEqual(got.Traits["color"].SignalsByKey, wantSignalsByKey) {
+		t.Fatalf("Extract() color signals_by_key = %+v, want %+v", got.Traits["color"].SignalsByKey, wantSignalsByKey)
+	}
 	shape, ok := got.Traits["shape"]
 	if !ok {
 		t.Fatalf("Extract() expected missing taxonomy to be added")
 	}
-	if shape.Summary != "unknown" || shape.Confidence != 0 || len(shape.Signals) != 0 {
+	if shape.Summary != "unknown" || shape.Confidence != 0 || len(shape.Signals) != 0 || len(shape.SignalsByKey) != 0 {
 		t.Fatalf("Extract() defaulted trait = %+v, want unknown defaults", shape)
 	}
 	if len(got.Notes) != 2 {
@@ -184,6 +188,22 @@ func TestTraitsJSONSchema(t *testing.T) {
 		if _, ok := props[key]; !ok {
 			t.Fatalf("schema missing property %q", key)
 		}
+	}
+
+	traitsProp, ok := props["traits"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("schema traits property wrong type: %#v", props["traits"])
+	}
+	traitItem, ok := traitsProp["additionalProperties"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("schema traits additionalProperties wrong type: %#v", traitsProp["additionalProperties"])
+	}
+	traitProps, ok := traitItem["properties"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("schema trait properties wrong type: %#v", traitItem["properties"])
+	}
+	if _, ok := traitProps["signals_by_key"]; !ok {
+		t.Fatalf("schema trait missing property %q", "signals_by_key")
 	}
 
 	required, ok := schema["required"].([]string)

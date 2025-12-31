@@ -57,9 +57,10 @@ func (e *Extractor) Extract(ctx context.Context, imagesBase64 []string) (Extract
 		}
 		if _, ok := parsed.Traits[t.Name]; !ok {
 			parsed.Traits[t.Name] = TraitCategoryResult{
-				Summary:    "unknown",
-				Signals:    []string{},
-				Confidence: 0,
+				Summary:      "unknown",
+				Signals:      []string{},
+				SignalsByKey: map[string][]string{},
+				Confidence:   0,
 			}
 			parsed.Notes = append(parsed.Notes, "missing taxonomy key: "+t.Name)
 		}

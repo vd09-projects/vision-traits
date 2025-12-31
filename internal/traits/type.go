@@ -7,7 +7,8 @@ type ExtractedTraits struct {
 }
 
 type TraitCategoryResult struct {
-	Summary    string   `json:"summary"`
-	Signals    []string `json:"signals"`
-	Confidence int      `json:"confidence"`
+	Summary       string              `json:"summary"`
+	Signals       []string            `json:"signals"`
+	SignalsByKey  map[string][]string `json:"signals_by_key,omitempty"`
+	Confidence    int                 `json:"confidence"`
 }
