@@ -3,6 +3,7 @@ package traits
 import (
 	"context"
 	"encoding/base64"
+	"fmt"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -11,7 +12,6 @@ import (
 	"github.com/vd09-projects/vision-traits/config"
 	itconfig "github.com/vd09-projects/vision-traits/internal/config"
 	"github.com/vd09-projects/vision-traits/internal/ollama"
-	ittraits "github.com/vd09-projects/vision-traits/internal/traits"
 )
 
 type stubOllama struct {
@@ -100,10 +100,7 @@ func TestExtractFromBase64LimitsAndDefaults(t *testing.T) {
 		t.Fatalf("ExtractFromBase64() unexpected error: %v", err)
 	}
 
-	res, ok := out.(ittraits.ExtractedTraits)
-	if !ok {
-		t.Fatalf("ExtractFromBase64() type = %T, want ExtractedTraits", out)
-	}
+	res := out
 
 	if res.GlobalConfidence != 90 {
 		t.Fatalf("global confidence = %d, want 90", res.GlobalConfidence)
@@ -157,7 +154,7 @@ func TestExtractFromPathsLimitsAndReads(t *testing.T) {
 		t.Fatalf("ExtractFromPaths() unexpected error: %v", err)
 	}
 
-	res := out.(ittraits.ExtractedTraits)
+	res := out
 	if res.Traits["color"].Summary != "blue" {
 		t.Fatalf("color summary = %q, want blue", res.Traits["color"].Summary)
 	}
@@ -187,5 +184,71 @@ func TestExtractFromBase64Errors(t *testing.T) {
 	}
 	if _, err := vt.ExtractFromBase64(context.Background(), nil); err == nil {
 		t.Fatalf("empty images expected error")
+	}
+}
+
+func TestExtractFromPathsErrors(t *testing.T) {
+	t.Parallel()
+
+	var vt *VisionTraits
+	if _, err := vt.ExtractFromPaths(context.Background(), []string{"img"}); err == nil {
+		t.Fatalf("nil receiver expected error")
+	}
+
+	tmpl := writeTemplate(t, "plain")
+	cfg := baseConfig(t, 1, tmpl)
+	client := stubOllama{t: t, response: "{}"}
+	vt, err := New(WithConfig(&cfg), WithOllamaClient(client))
+	if err != nil {
+		t.Fatalf("New() unexpected error: %v", err)
+	}
+
+	if _, err := vt.ExtractFromPaths(nil, []string{"img"}); err == nil {
+		t.Fatalf("nil context expected error")
+	}
+	if _, err := vt.ExtractFromPaths(context.Background(), nil); err == nil {
+		t.Fatalf("empty paths expected error")
+	}
+	if _, err := vt.ExtractFromPaths(context.Background(), []string{"missing-file"}); err == nil {
+		t.Fatalf("missing file expected error")
+	}
+}
+
+func TestNewWithConfigPathAndAccessors(t *testing.T) {
+	t.Parallel()
+
+	tmpl := writeTemplate(t, "plain")
+	cfgYAML := fmt.Sprintf(`
+ollama:
+  base_url: http://example.com
+  model: test
+traits:
+  max_images: 2
+  locale: en-US
+  taxonomy:
+    - name: color
+prompt:
+  template_path: %q
+  vars:
+    brand: demo
+`, tmpl)
+
+	dir := t.TempDir()
+	cfgPath := filepath.Join(dir, "cfg.yaml")
+	if err := os.WriteFile(cfgPath, []byte(cfgYAML), 0o600); err != nil {
+		t.Fatalf("write cfg: %v", err)
+	}
+
+	client := stubOllama{t: t, response: `{"global_confidence":0,"traits":{},"notes":[]}`}
+	vt, err := New(WithConfigPath(cfgPath), WithOllamaClient(client))
+	if err != nil {
+		t.Fatalf("New() unexpected error: %v", err)
+	}
+
+	if vt.MaxImages() != 2 {
+		t.Fatalf("MaxImages() = %d, want 2", vt.MaxImages())
+	}
+	if vt.Config().Prompt.TemplatePath != tmpl {
+		t.Fatalf("Config() template path = %q, want %q", vt.Config().Prompt.TemplatePath, tmpl)
 	}
 }

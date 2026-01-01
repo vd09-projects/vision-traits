@@ -11,6 +11,9 @@ import (
 	util "github.com/vd09-projects/vision-traits/internal/utils"
 )
 
+type ExtractedTraits = ittraits.ExtractedTraits
+type TraitCategoryResult = ittraits.TraitCategoryResult
+
 // VisionTraits is a reusable facade for extracting structured traits from images.
 type VisionTraits struct {
 	cfg       config.Config
@@ -115,15 +118,15 @@ func (v *VisionTraits) MaxImages() int {
 
 // ExtractFromBase64 extracts traits from base64-encoded images.
 // It applies cfg.Traits.MaxImages limit (if > 0).
-func (v *VisionTraits) ExtractFromBase64(ctx context.Context, base64Images []string) (any, error) {
+func (v *VisionTraits) ExtractFromBase64(ctx context.Context, base64Images []string) (ExtractedTraits, error) {
 	if v == nil || v.extractor == nil {
-		return nil, fmt.Errorf("visiontraits not initialized")
+		return ExtractedTraits{}, fmt.Errorf("visiontraits not initialized")
 	}
 	if ctx == nil {
-		return nil, fmt.Errorf("ctx is nil")
+		return ExtractedTraits{}, fmt.Errorf("ctx is nil")
 	}
 	if len(base64Images) == 0 {
-		return nil, fmt.Errorf("no images provided")
+		return ExtractedTraits{}, fmt.Errorf("no images provided")
 	}
 
 	limited := base64Images
@@ -131,28 +134,28 @@ func (v *VisionTraits) ExtractFromBase64(ctx context.Context, base64Images []str
 		var err error
 		limited, err = util.LimitSlice(base64Images, v.cfg.Traits.MaxImages)
 		if err != nil {
-			return nil, fmt.Errorf("limit images: %w", err)
+			return ExtractedTraits{}, fmt.Errorf("limit images: %w", err)
 		}
 	}
 
 	res, err := v.extractor.Extract(ctx, limited)
 	if err != nil {
-		return nil, fmt.Errorf("extract: %w", err)
+		return ExtractedTraits{}, fmt.Errorf("extract: %w", err)
 	}
 	return res, nil
 }
 
 // ExtractFromPaths reads images from disk (as base64) and extracts traits.
 // It applies cfg.Traits.MaxImages limit (if > 0).
-func (v *VisionTraits) ExtractFromPaths(ctx context.Context, paths []string) (any, error) {
+func (v *VisionTraits) ExtractFromPaths(ctx context.Context, paths []string) (ExtractedTraits, error) {
 	if v == nil || v.extractor == nil {
-		return nil, fmt.Errorf("visiontraits not initialized")
+		return ExtractedTraits{}, fmt.Errorf("visiontraits not initialized")
 	}
 	if ctx == nil {
-		return nil, fmt.Errorf("ctx is nil")
+		return ExtractedTraits{}, fmt.Errorf("ctx is nil")
 	}
 	if len(paths) == 0 {
-		return nil, fmt.Errorf("no image paths provided")
+		return ExtractedTraits{}, fmt.Errorf("no image paths provided")
 	}
 
 	limited := paths
@@ -160,7 +163,7 @@ func (v *VisionTraits) ExtractFromPaths(ctx context.Context, paths []string) (an
 		var err error
 		limited, err = util.LimitSlice(paths, v.cfg.Traits.MaxImages)
 		if err != nil {
-			return nil, fmt.Errorf("limit paths: %w", err)
+			return ExtractedTraits{}, fmt.Errorf("limit paths: %w", err)
 		}
 	}
 
@@ -168,7 +171,7 @@ func (v *VisionTraits) ExtractFromPaths(ctx context.Context, paths []string) (an
 	for _, p := range limited {
 		b64, err := util.ReadImageAsBase64(p)
 		if err != nil {
-			return nil, fmt.Errorf("read image %q: %w", p, err)
+			return ExtractedTraits{}, fmt.Errorf("read image %q: %w", p, err)
 		}
 		imgs = append(imgs, b64)
 	}
