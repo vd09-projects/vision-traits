@@ -10,16 +10,12 @@ import (
 	"github.com/vd09-projects/vision-traits/internal/prompt"
 )
 
-type ollamaClient interface {
-	Generate(context.Context, ollama.GenerateRequest) (string, error)
-}
-
 type Extractor struct {
 	cfg    config.Config
-	ollama ollamaClient
+	ollama ollama.OllamaClient
 }
 
-func NewExtractor(cfg config.Config, client *ollama.Client) *Extractor {
+func NewExtractor(cfg config.Config, client ollama.OllamaClient) *Extractor {
 	return &Extractor{cfg: cfg, ollama: client}
 }
 
