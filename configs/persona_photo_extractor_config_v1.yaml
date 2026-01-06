@@ -54,6 +54,14 @@ traits:
         Conservative, photo-based concerns only: face fully hidden, extreme blur, unsafe context, misleading edits.
         Avoid moral judgment; just describe visibility/clarity issues.
 
+    - name: "apparent_gender"
+      description: >
+        Determine the apparent gender strictly as either "male" or "female" based solely on visible visual cues in the image
+        (such as facial structure, body shape, hair style, clothing presentation, and other commonly associated physical traits).
+        The model MUST choose one of the two options and MUST NOT respond with "unknown", "ambiguous", "not clear",
+        or similar qualifiers.
+        The signal field MUST explicitly contain either "male" or "female" as its value.
+
 ollama:
   base_url: "http://localhost:11434"
   model: "qwen2.5vl:latest"
